@@ -1,3 +1,4 @@
+/*
 package jpabook.jpashop;
 
 import com.fasterxml.jackson.databind.deser.std.StdKeyDeserializer;
@@ -36,4 +37,4 @@ class MemberRepositoryTest {
         // 영속성 컨텍스트 안에서는 같은 id면 같은 Entity~ -> 1차 캐시에서 가져 온다.
         Assertions.assertThat(findMember).isEqualTo(member);
     }
-}
+}*/
