@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 @Entity
 @Table(name = "orders")
@@ -54,5 +57,52 @@ public class Order {
         delivery.setOrder(this);
     }
 
+    //=== 생성 메서드 ===//
+    public static Order createOrder(Member member, Delivery delivery, OrderItem ... orderItems) {
+        // 복잡한 비즈니스 로직을 응집해둔다. 변경 시 이 메서드만 수정하면 된다.
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        // 처음 상태를 오더로 한다
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+
+        return order;
+    }
+
+    //=== 비즈니스 로직 ===//
+    /**
+     * 주문 취소
+     */
+    public void cancel() {
+        // COMP는 배송 완료
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완룐된 상품은  취소가 불가능합니다.");
+        }
+
+        this.setStatus(OrderStatus.CANCEL);
+
+        for (OrderItem orderItem : orderItems) {
+            // 주문 하나에 2개의 상품이 있을 수 있다. 2개를 각각 취소해주는 cancel 메소드
+            orderItem.cancel();
+        }
+    }
+
+    //=== 조회 로직===//
+    /**
+     * 전체 주문 가격 조회
+     */
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        // 람다 활용하면 가독성이 더 좋게 코드를 작성할 수 있다.
+        // totalPrice = orderItems.stream().mapToInt(OrderItem::getTotalPrice).sum();
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
+    }
 
 }
