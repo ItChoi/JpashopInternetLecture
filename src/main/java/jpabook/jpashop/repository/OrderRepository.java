@@ -58,7 +58,7 @@ public class OrderRepository {
             } else {
                 jpql += " and";
             }
-            jpql += " m.name like :status";
+            jpql += " m.name like :name";
         }
         TypedQuery<Order> query = em.createQuery(jpql, Order.class)
                 .setMaxResults(1000);
