@@ -23,6 +23,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-devtools'
+
+	// JPA 연관 관계 매핑 시 무한 참조 루프를 돌 때 @JsonIgnore + Hibernate5Module이 필요한데, 이를 위해 필요한 라이브러리
+	// 버전을 빼보자 우선, 스프링 부트가 본인한테 최적화된 버전을 보통 가지고 있다.
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
+
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'

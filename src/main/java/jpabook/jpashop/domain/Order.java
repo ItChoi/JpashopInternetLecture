@@ -20,6 +20,7 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
+    // 지연 로딩을 쓰기때문에 Member member = new ByteBuddyInterceptor();라는 것이 들어간다. 우리눈에 보이진 않지만!
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

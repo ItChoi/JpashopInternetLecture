@@ -100,4 +100,15 @@ public class OrderRepository {
 
     }
 
+    // 한방 쿼리로 셀렉트 절에 다 넣고 다 떙겨 온다.
+    // member, delivery LAZY를 무시하고, 진짜 객체에 값을 다 채워서 가져온다.
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d"
+                , Order.class
+        ).getResultList();
+    }
+
 }

@@ -18,4 +18,4 @@ logging:
     # JPA나 Hibernate가 생성하는 sql이 다 보인다.
     # show_sql: true는 sysout으로 찍고 이것은 log로 찍는다.
     org.hibetnate.SQL: debug
-    org.hibernate.type: trace
+    # org.hibernate.type: trace
