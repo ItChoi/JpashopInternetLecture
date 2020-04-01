@@ -1,26 +1,22 @@
 package jpabook.jpashop.api;
 
-import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
-import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.order.query.OrderFlatDto;
-import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
-import lombok.Data;
-import lombok.Getter;
+import jpabook.jpashop.service.query.OrderDto;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -55,15 +51,11 @@ public class OrderApiController {
         return result;
     }
 
+    private final OrderQueryService orderQueryService;
+
     @GetMapping("/api/v3/orders")
     public List<OrderDto> orderV3() {
-        List<Order> orders = orderRepository.findAllWithItem();
-
-        List<OrderDto> result = orders.stream()
-                .map(OrderDto::new)
-                .collect(Collectors.toList());
-
-        return result;
+        return orderQueryService.orderV3();
     }
 
     @GetMapping("/api/v3.1/orders")
@@ -103,44 +95,4 @@ public class OrderApiController {
          return orderQueryRepository.findAllByDto_flat();
     }
 
-
-    @Getter
-    static class OrderDto {
-
-        private Long orderId;
-        private String name;
-        private LocalDateTime orderDate;
-        private OrderStatus orderStatus;
-        private Address address;
-        // 보여드리려고 일단 하는거임 - DTO 안에 Entity가 있으면 안된다. 매핑도 안된다!! 외부에 노출되면 안된다!!!
-        // 엔티티에 대한 의존을 완전히 끊자!
-        private List<OrderItemDto> orderItems;
-
-        public OrderDto(Order order) {
-            this.orderId = order.getId();
-            this.name = order.getMember().getName();
-            this.orderDate = order.getOrderDate();
-            this.address = order.getDelivery().getAddress();
-            order.getOrderItems().stream().forEach(o -> o.getItem().getName());
-            this.orderItems = order.getOrderItems().stream()
-                                    .map(orderItem -> new OrderItemDto(orderItem))
-                                    .collect(Collectors.toList());
-
-        }
-
-        @Getter
-        static class OrderItemDto {
-
-            private String itemName;
-            private int orderPrice;
-            private int count;
-
-            public OrderItemDto(OrderItem orderItem) {
-                this.itemName = orderItem.getItem().getName();
-                orderPrice = orderItem.getOrderPrice();
-                count = orderItem.getCount();
-            }
-        }
-    }
-    
 }
